@@ -50,7 +50,6 @@ def insert_dates(conn, data):
     cur = conn.cursor()
     cur.execute(sql, data)
     conn.commit()
-    return cur.lastrowid
 
 
 
