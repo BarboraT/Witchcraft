@@ -1,12 +1,13 @@
 import sqlite3
 from sqlite3 import Error
 
-datum =input("Napiš datum ve formátu: RRRR-MM-DD ")
-prijem = input("Napiš částku příjmu, pokud žádná, tak 0 ")
-vydaj_jidlo = input("Pokud za jídlo napiš částku, pokud ne,napiš 0 ")
-vydaj_obleceni = input("Pokud za obleční napiš částku, pokud ne,napiš 0 ")
-vydaj_zabava = input("Pokud za zábavu napiš částku, pokud ne,napiš 0 ")
-vydaj_fix = input("Pokud za fix napiš částku, pokud ne,napiš 0 ")
+# datum =input("Napiš datum ve formátu: RRRR-MM-DD ")
+# prijem = input("Napiš částku příjmu, pokud žádná, tak 0 ")
+# vydaj_jidlo = input("Pokud za jídlo napiš částku, pokud ne,napiš 0 ")
+# vydaj_obleceni = input("Pokud za obleční napiš částku, pokud ne,napiš 0 ")
+# vydaj_zabava = input("Pokud za zábavu napiš částku, pokud ne,napiš 0 ")
+# vydaj_fix = input("Pokud za fix napiš částku, pokud ne,napiš 0 ")
+smazat_cely_radek_datum = input("Chceš smazat řádek s datem? Napiš, které datum RRRR-MM-DD ")
 
 
 
@@ -32,13 +33,14 @@ def create_table(conn, create_table_sql):
     """ create a table from the create_table_sql statement
     :param conn: Connection object
     :param create_table_sql: a CREATE TABLE statement
-    :return:
     """
     try:
         c = conn.cursor()
         c.execute(create_table_sql)
     except Error as e:
         print(e)
+
+
 
 def insert_dates(conn, data):
     """
@@ -49,6 +51,20 @@ def insert_dates(conn, data):
     sql = """INSERT INTO cf(date, income, ex_food, ex_clothes, ex_fun, ex_fix) VALUES (?,?,?,?,?,?)"""
     cur = conn.cursor()
     cur.execute(sql, data)
+    conn.commit()
+
+
+
+def delete_all_row_cf(conn, smazat_cely_radek_datum):
+    """
+    Smaže celý řádek, kde je obsažené datum, které zadáme
+    :param conn:  Connection to the SQLite database
+    :param date: date of the expenditure or income
+    :return:
+    """
+    sql = 'DELETE FROM cf WHERE date=?'
+    cur = conn.cursor()
+    cur.execute(sql, (smazat_cely_radek_datum,))
     conn.commit()
 
 
@@ -77,8 +93,9 @@ def main():
         print("Error! cannot create the database connection.")
 
 
-    data = (datum, prijem, vydaj_jidlo, vydaj_obleceni, vydaj_zabava, vydaj_fix)
-    insert_dates(conn, data)
+    # data = (datum, prijem, vydaj_jidlo, vydaj_obleceni, vydaj_zabava, vydaj_fix)
+    # insert_dates(conn, data)
+    delete_all_row_cf(conn, smazat_cely_radek_datum)
 
 if __name__ == '__main__':
     main()
